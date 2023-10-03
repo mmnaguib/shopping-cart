@@ -4,10 +4,8 @@ import { storeData } from "../../assets/data/dummyData";
 const ProductSlice = createSlice({
   name: "product",
   initialState: {
-    filteredProducts:
-      JSON.parse(sessionStorage.getItem("filteredData")) || storeData,
-    singleProduct:
-      JSON.parse(sessionStorage.getItem("singleProduct")) || storeData,
+    filteredProducts: storeData,
+    singleProduct: storeData,
     error: false,
   },
   reducers: {
@@ -42,29 +40,81 @@ const ProductSlice = createSlice({
         const genderProduct = storeData.filter(
           (product) => product.gender === action.payload
         );
-        state.storeData = genderProduct;
         state.error = false;
-        const savedState = JSON.stringify(genderProduct);
-        sessionStorage.setItem("filteredData", savedState);
+        state.storeData = genderProduct;
+        if (genderProduct.length > 0) {
+          state.error = false;
+          const saveState = JSON.stringify(genderProduct);
+          sessionStorage.setItem("filteredData", saveState);
+        } else {
+          state.error = true;
+          state.filteredProducts = [];
+        }
       } catch (e) {
         return e.message();
       }
     },
     sortByPrice: (state, action) => {
       try {
-        const filter = storeData.filter(
-          (product) => product.price === action.payload
+        const priceProduct = state.filteredProducts.sort((a, b) =>
+          a.price > b.price ? -1 : 1
         );
-        state.storeData = filter;
-        state.error = false;
-        const savedState = JSON.stringify(filter);
-        sessionStorage.setItem("filteredData", savedState);
-      } catch (e) {
-        return e.message();
+        state.filteredProducts = priceProduct;
+        if (priceProduct.length) {
+          state.error = false;
+          if (!state.error) {
+            state.filteredProducts = priceProduct;
+            const saveState = JSON.stringify(priceProduct);
+            sessionStorage.setItem("filteredData", saveState);
+          }
+        } else {
+          state.error = true;
+          state.filteredProducts = [];
+        }
+      } catch (err) {
+        return err;
       }
     },
-    filterByColor: (state, action) => {},
-    filterBySize: (state, action) => {},
+    filterByColor: (state, action) => {
+      try {
+        const colorProduct = state.filteredProducts.filter((product) =>
+          product.color.includes(action.payload)
+        );
+        state.error = false;
+        state.filteredProducts = colorProduct;
+        if (colorProduct.length <= 0) {
+          state.error = true;
+          state.filteredProducts = [];
+        } else {
+          state.error = false;
+          state.filteredProducts = colorProduct;
+          const saveState = JSON.stringify(colorProduct);
+          sessionStorage.setItem("filteredData", saveState);
+        }
+      } catch (err) {
+        return err;
+      }
+    },
+    filterBySize: (state, action) => {
+      try {
+        const sizeProduct = state.filteredProducts.filter((product) =>
+          product.size.includes(action.payload)
+        );
+        state.error = false;
+        state.filteredProducts = sizeProduct;
+        if (sizeProduct.length > 0) {
+          state.error = false;
+          state.filteredProducts = sizeProduct;
+          const saveState = JSON.stringify(sizeProduct);
+          sessionStorage.setItem("filteredData", saveState);
+        } else {
+          state.error = true;
+          state.filteredProducts = [];
+        }
+      } catch (e) {
+        return e.massage();
+      }
+    },
   },
 });
 
