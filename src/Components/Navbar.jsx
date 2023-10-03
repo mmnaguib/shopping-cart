@@ -1,14 +1,21 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import logo from "../assets/images/logo.png";
 import Cart from "./Cart";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../app/Slices/UserSlice";
+import { Avatar } from "@material-tailwind/react";
+import { Tooltip } from "@material-tailwind/react";
 
 const Navbar = () => {
+  const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const user = useSelector((state) => state.user.user);
+  const { name, image } = user;
   const [open, setOpen] = useState(false);
-  const countCart = useSelector((state) => state.cart.totalAmount);
   const handleOpen = () => {
     setOpen(true);
   };
+  const dispatch = useDispatch();
+
   return (
     <>
       <div className="bg-black p-4 w-full flex justify-center items-center ">
@@ -18,7 +25,7 @@ const Navbar = () => {
       </div>
       <div className="flex justify-around items-center">
         <div>
-          <img className="h-28 w-full" src={logo} alt="store" />
+          <img className="h-28 w-full" src={logo} alt="store"></img>
         </div>
         <div className="flex flex-row items-center">
           <div className="flex flex-row items-center">
@@ -44,9 +51,9 @@ const Navbar = () => {
             className="flex flex-row items-center cursor-pointer"
             onClick={handleOpen}
           >
-            {countCart > 0 ? (
+            {totalAmount > 0 ? (
               <span className="rounded-full bg-gray-300 px-2 font-inter text-sm mr-1">
-                {countCart}
+                {totalAmount}
               </span>
             ) : (
               <svg
@@ -65,12 +72,14 @@ const Navbar = () => {
               </svg>
             )}
 
-            <p className=" font-inter text-base font-medium tracking-normal leading-none text-center">
+            <p className=" font-inter text-base font-medium tracking-normal leading-none text-center ">
               Shopping bag
             </p>
-            <div>{open && <Cart openModal={open} setOpen={setOpen} />}</div>
+            <div>
+              {open && <Cart openModal={open} setOpen={setOpen}></Cart>}
+            </div>
           </div>
-          {/*<div className="flex flex-row items-center cursor-pointer pl-4">
+          <div className="flex flex-row items-center cursor-pointer pl-4">
             {image && (
               <Avatar
                 src={image}
@@ -86,7 +95,7 @@ const Navbar = () => {
                 </p>
               </Tooltip>
             </div>
-            </div>*/}
+          </div>
         </div>
       </div>
       <div className="bg-black p-4 w-full flex items-center justify-center mx-auto">

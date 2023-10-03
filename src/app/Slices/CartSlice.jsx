@@ -1,72 +1,77 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const CartSlice = createSlice({
+export const cartSlice = createSlice({
   name: "cart",
-  initialState: { cart: [], amount: 0, totalAmount: 0, totalPrice: 0 },
+  initialState: {
+    cart: [],
+    amount: 0,
+    totalAmount: 0,
+    totalPrice: 0,
+  },
   reducers: {
-    addToCart: (state, action) => {
-      const product = action.payload;
+    addToCart(state, action) {
+      const productId = action.payload;
       try {
         const exist = state.cart.find(
-          (el) =>
-            el.id === product.id &&
-            el.size === product.size &&
-            el.color === product.color
+          (product) =>
+            product.id === productId.id &&
+            product.size === productId.size &&
+            product.color === productId.color
         );
         if (exist) {
           exist.amount++;
-          exist.totalPrice += product.price;
+          exist.totalPrice += productId.price;
           state.totalAmount++;
-          state.totalPrice += product.price;
+          state.totalPrice += productId.price;
         } else {
           state.cart.push({
-            id: product.id,
-            price: product.price,
-            size: product.size,
+            id: productId.id,
+            price: productId.price,
+            size: productId.size,
             amount: 1,
-            img: product.img,
-            totalPrice: product.price,
-            name: product.name,
-            text: product.text,
-            color: product.color,
+            img: productId.img,
+            totalPrice: productId.price,
+            name: productId.name,
+            text: productId.text,
+            color: productId.color,
           });
           state.totalAmount++;
-          state.totalPrice += product.price;
+          state.totalPrice += productId.price;
         }
-      } catch (e) {
-        return e.massage();
+      } catch (err) {
+        return err;
       }
     },
-    removeFromCart: (state, action) => {
-      const product = action.payload;
+    removeFromCart(state, action) {
+      const productId = action.payload;
       try {
         const exist = state.cart.find(
-          (el) =>
-            el.id === product.id &&
-            el.size === product.size &&
-            el.color === product.color
+          (product) =>
+            product.id === productId.id &&
+            product.size === productId.size &&
+            product.color === productId.color
         );
         if (exist.amount === 1) {
           state.cart = state.cart.filter(
-            (el) =>
-              el.id !== product.id ||
-              el.size !== product.size ||
-              el.color !== product.color
+            (product) =>
+              product.id !== productId.id ||
+              product.size !== productId.size ||
+              product.color !== productId.color
           );
           state.totalAmount--;
-          state.totalPrice -= product.price;
+          state.totalPrice -= productId.price;
         } else {
           exist.amount--;
-          exist.totalPrice -= product.price;
+          exist.totalPrice -= productId.price;
           state.totalAmount--;
-          state.totalPrice -= product.price;
+          state.totalPrice -= productId.price;
         }
-      } catch (e) {
-        return e.massage();
+      } catch (err) {
+        return err;
       }
     },
   },
 });
 
-export const { addToCart, removeFromCart } = CartSlice.actions;
-export default CartSlice.reducer;
+export const { addToCart, removeFromCart } = cartSlice.actions;
+export default cartSlice.reducer;
